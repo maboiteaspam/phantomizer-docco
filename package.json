@@ -1,0 +1,23 @@
+{
+    "name": "phantomizer-docco",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Docco javascript documentation tool support for phantomizer",
+    "keywords": "",
+    "bugs": {
+        "url" : "http://github.com/maboiteaspam/phantomizer-docco/issues"
+        , "email" : "none@host.com"
+    },
+    "license" : "mit",
+    "directories.lib": "lib/",
+    "repository" :{
+        "type" : "git"
+        , "url" : "http://github.com/maboiteaspam/phantomizer-docco.git"
+    },
+    "dependencies": {
+        "grunt": "0.4.x",
+        "docco": "git://github.com/jashkenas/docco.git#d6fd45c"
+    },
+    "devDependencies": {
+    }
+}
