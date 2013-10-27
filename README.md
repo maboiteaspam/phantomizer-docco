@@ -23,8 +23,8 @@ http://github.com/maboiteaspam/phantomizer
   'phantomizer-docco': {         // Task
     document: {                  // Target
       options: {                 // Target options
-        src_pattern:['...'],     // source directories, default:"<%= src_dir %>/js/","<%= wbm_dir %>/js/"
-        out_dir:'...',           // output directory, default:'<%= documentation_dir %>/js/'
+        src_pattern:['...'],     // source directories
+        out_dir:'...',           // output directory
         layout:'linear|parallel' // The Docco layout, default: linear
       }
     }

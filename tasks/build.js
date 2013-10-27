@@ -10,10 +10,11 @@ module.exports = function(grunt) {
         var done = this.async();
 
         var options = this.options({
-            src_pattern:["<%= src_dir %>/js/","<%= wbm_dir %>/js/"],
-            out_dir:'<%= documentation_dir %>/js/',
+            src_pattern:[],
+            out_dir:'',
             layout:'linear'
         });
+
         var src_paths = options.src_pattern;
         var out_dir = options.out_dir;
         // - Generate documentation for script files
