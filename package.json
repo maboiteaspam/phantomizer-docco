@@ -9,7 +9,6 @@
         "email": "none@host.com"
     },
     "license": "mit",
-    "directories.lib": "lib/",
     "repository": {
         "type": "git",
         "url": "http://github.com/maboiteaspam/phantomizer-docco.git"
