@@ -20,12 +20,12 @@ http://github.com/maboiteaspam/phantomizer
 
 ```javascript
 {
-  'phantomizer-docco': {                // Task
-    document: {                         // Target
-      options: {                        // Target options
-        src_pattern:['...'],            // source directories, default:"<%= src_dir %>/js/","<%= wbm_dir %>/js/"
-        out_dir:'...',                  // output directories, default:'<%= documentation_dir %>/js/'
-        layout:'linear|parallel'        // The Docco layout, default: linear
+  'phantomizer-docco': {         // Task
+    document: {                  // Target
+      options: {                 // Target options
+        src_pattern:['...'],     // source directories, default:"<%= src_dir %>/js/","<%= wbm_dir %>/js/"
+        out_dir:'...',           // output directory, default:'<%= documentation_dir %>/js/'
+        layout:'linear|parallel' // The Docco layout, default: linear
       }
     }
   }
