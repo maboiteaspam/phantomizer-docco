@@ -1,6 +1,6 @@
 {
     "name": "phantomizer-docco",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "private": true,
     "description": "Docco javascript documentation tool support for phantomizer",
     "keywords": "",
