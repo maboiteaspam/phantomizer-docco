@@ -9,7 +9,11 @@ module.exports = function(grunt) {
     grunt.registerTask("phantomizer-docco", "", function () {
         var done = this.async();
 
-        var options = this.options();
+        var options = this.options({
+            src_pattern:["<%= src_dir %>/js/","<%= wbm_dir %>/js/"],
+            out_dir:'<%= documentation_dir %>/js/',
+            layout:'linear'
+        });
         var src_paths = options.src_pattern;
         var out_dir = options.out_dir;
         // - Generate documentation for script files
@@ -26,16 +30,21 @@ module.exports = function(grunt) {
         var docco_runs = [];
         var current_docco = 0;
         for( var n in src_paths ){
-            var src_path = src_paths[n];
+            var src_path = path.normalize(src_paths[n]);
             var files = grunt.file.expand({}, src_path+"**/*.js");
-            filescount += files.length-1;
-            var files_by_dir = grouped_by_directory(files);
+            if( files.length == 0 ){
+                grunt.log.warn("Did not find files in "+src_path)
+            }else{
+                filescount += files.length-1;
+                var files_by_dir = grouped_by_directory(files);
 
-            for(var dir in files_by_dir ){
-                docco_runs.push({
-                    out: output+dir.substr(src_path.length-1),
-                    files: files_by_dir[dir]
-                });
+                for(var dir in files_by_dir ){
+                    docco_runs.push({
+                        out: path.normalize(output+dir.substr(src_path.length-1)),
+                        src_path: src_path,
+                        files: files_by_dir[dir]
+                    });
+                }
             }
         }
 
@@ -50,7 +59,7 @@ module.exports = function(grunt) {
             var args = [
                 docco_path,
                 "--verbose",
-                "-l", "parallel",
+                "-l", options.layout,
                 "-o", docco_run.out
             ];
             for( var f in docco_run.files ){
@@ -61,7 +70,12 @@ module.exports = function(grunt) {
                 cur_f_count = 0;
 
                 childProcess.execFile(process.execPath, args, function(err, stdout, stderr) {
-                    console.log(stdout)
+                    grunt.log.writeln("");
+                    grunt.log.ok("Directory "+(current_docco+1)+"/"+docco_runs.length);
+                    if( err ) grunt.log.writeln(err)
+                    if( stderr ) grunt.log.writeln(stderr)
+                    stdout = treat_stdout(stdout,docco_run.src_path,docco_run.out)
+                    grunt.log.ok(stdout);
                     current_docco++;
                     run_docco();
                 })
@@ -71,8 +85,6 @@ module.exports = function(grunt) {
             }
         }
         run_docco();
-
-
     });
 
     function grouped_by_directory( files ){
@@ -84,6 +96,15 @@ module.exports = function(grunt) {
             retour[d].push(f);
         }
         return retour;
+    }
+
+    function treat_stdout( stdout,src_path,out_path ){
+        var retour = [];
+        stdout = stdout.split("\n");
+        for( var n in stdout ){
+            retour.push(stdout[n].replace(src_path,"").replace(out_path,"").replace("docco: ",""))
+        }
+        return retour.join("\n");
     }
 
 };
