@@ -36,16 +36,18 @@ module.exports = function(grunt) {
             if( files.length == 0 ){
                 grunt.log.warn("Did not find files in "+src_path)
             }else{
-                filescount += files.length-1;
                 var files_by_dir = grouped_by_directory(files);
-
                 for(var dir in files_by_dir ){
-                    docco_runs.push({
-                        out: path.normalize(output+dir.substr(src_path.length-1)),
-                        src_path: src_path,
-                        files: files_by_dir[dir]
-                    });
+                    if( files_by_dir[dir].length > 0 ){
+                        docco_runs.push({
+                            out: path.normalize(output+dir.substr(src_path.length-1)),
+                            src_path: src_path,
+                            files: files_by_dir[dir]
+                        });
+                        filescount += files_by_dir[dir].length-1;
+                    }
                 }
+
             }
         }
 
