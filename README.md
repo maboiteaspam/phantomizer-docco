@@ -17,7 +17,7 @@ http://github.com/maboiteaspam/phantomizer
 
 Documented source code is available here
 
-http://maboiteaspam.github.io/phantomizer-docco/
+http://maboiteaspam.github.io/phantomizer-docco/documentation/build.html
 
 
 #### Example config
