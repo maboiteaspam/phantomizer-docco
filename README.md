@@ -15,7 +15,10 @@ Find out more about Phantomizer
 
 http://github.com/maboiteaspam/phantomizer
 
-Documented source code is available here
+
+# Documentation Index
+
+http://maboiteaspam.github.io/phantomizer-docco/
 
 http://maboiteaspam.github.io/phantomizer-docco/documentation/build.html
 
