@@ -1,27 +1,27 @@
 {
-    "name": "phantomizer-docco",
-    "version": "0.1.5",
-    "private": true,
-    "description": "Docco litteral documentation tool support for phantomizer",
-    "keywords": "",
-    "bugs": {
-        "url": "http://github.com/maboiteaspam/phantomizer-docco/issues",
-        "email": "none@host.com"
-    },
-    "license": "mit",
-    "repository": {
-        "type": "git",
-        "url": "http://github.com/maboiteaspam/phantomizer-docco.git"
-    },
-    "dependencies": {
-        "grunt": "0.4.x",
-        "docco": "git://github.com/jashkenas/docco.git#d6fd45c"
-    },
-    "devDependencies": {
-        "docco": "jashkenas/docco",
-        "grunt-docco": "DavidSouther/grunt-docco",
-        "grunt-release": "geddski/grunt-release",
-        "grunt-gh-pages": "~0.9.0",
-        "wrench": "~1.5.6"
-    }
+  "name": "phantomizer-docco",
+  "version": "0.1.6",
+  "private": true,
+  "description": "Docco litteral documentation tool support for phantomizer",
+  "keywords": "",
+  "bugs": {
+    "url": "http://github.com/maboiteaspam/phantomizer-docco/issues",
+    "email": "none@host.com"
+  },
+  "license": "mit",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/maboiteaspam/phantomizer-docco.git"
+  },
+  "dependencies": {
+    "grunt": "0.4.x",
+    "docco": "git://github.com/jashkenas/docco.git#d6fd45c"
+  },
+  "devDependencies": {
+    "docco": "jashkenas/docco",
+    "grunt-docco": "DavidSouther/grunt-docco",
+    "grunt-release": "geddski/grunt-release",
+    "grunt-gh-pages": "~0.9.0",
+    "wrench": "~1.5.6"
+  }
 }
