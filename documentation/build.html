@@ -61,9 +61,7 @@ src_pattern is a path array, <em>*/</em>.js will be appended to it</p>
         <p>ensure output directory exists</p>
 
         
-          <div class='highlight'><pre>        <span class="keyword">if</span>( fs.existsSync(output) == <span class="literal">false</span> ){
-            fs.mkdirSync(output);
-        }</pre></div>
+          <div class='highlight'><pre>        grunt.file.mkdir(output)</pre></div>
         
       
         
