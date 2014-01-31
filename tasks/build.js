@@ -24,9 +24,7 @@ module.exports = function(grunt) {
         var output = out_dir.replace(/\\/g,"/");
 
         // ensure output directory exists
-        if( fs.existsSync(output) == false ){
-            fs.mkdirSync(output);
-        }
+        grunt.file.mkdir(output)
 
         // Array of batch for each directory, holds output, src_pattern and files found within
         var docco_runs = [];
