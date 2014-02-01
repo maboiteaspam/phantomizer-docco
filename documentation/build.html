@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>build.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>build.js</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
+
+module.exports = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(grunt)</span> {</span>
+
+    <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"fs"</span>);
+    <span class="hljs-keyword">var</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">"path"</span>);
+    <span class="hljs-keyword">var</span> childProcess = <span class="hljs-built_in">require</span>(<span class="hljs-string">'child_process'</span>);
+
+    grunt.registerTask(<span class="hljs-string">"phantomizer-docco"</span>, <span class="hljs-string">"Docco litteral documentation tool support for phantomizer"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></pre></div>
+        
+      
+        
+        <p>this task is async, save async handler for later consumption</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> done = <span class="hljs-keyword">this</span>.async();</pre></div>
+        
+      
+        
+        <p>default options
+src_pattern is a path array, <em>*/</em>.js will be appended to it</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options({
+            src_pattern:[],
+            out_dir:<span class="hljs-string">''</span>,
+            layout:<span class="hljs-string">'linear'</span>
+        });
+
+        <span class="hljs-keyword">var</span> src_paths = options.src_pattern;
+        <span class="hljs-keyword">var</span> out_dir = options.out_dir;
+        <span class="hljs-keyword">var</span> output = out_dir.replace(<span class="hljs-regexp">/\\/g</span>,<span class="hljs-string">"/"</span>);</pre></div>
+        
+      
+        
+        <p>ensure output directory exists</p>
+
+        
+          <div class='highlight'><pre>        grunt.file.mkdir(output)</pre></div>
+        
+      
+        
+        <p>Array of batch for each directory, holds output, src_pattern and files found within</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> docco_runs = [];</pre></div>
+        
+      
+        
+        <p>current count of batch done</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> current_docco = <span class="hljs-number">0</span>;</pre></div>
+        
+      
+        
+        <p>iterate the sources paths</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> n <span class="hljs-keyword">in</span> src_paths ){
+            <span class="hljs-keyword">var</span> src_path = path.normalize(src_paths[n]);</pre></div>
+        
+      
+        
+        <p>find all files to document</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">var</span> files = grunt.file.expand({}, src_path+<span class="hljs-string">"**/*.js"</span>);
+            <span class="hljs-keyword">if</span>( files.length == <span class="hljs-number">0</span> ){
+                grunt.log.warn(<span class="hljs-string">"Did not find files in "</span>+src_path)
+            }<span class="hljs-keyword">else</span>{</pre></div>
+        
+      
+        
+        <p>group them by diretory</p>
+
+        
+          <div class='highlight'><pre>                <span class="hljs-keyword">var</span> files_by_dir = grouped_by_directory(files);
+                <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> dir <span class="hljs-keyword">in</span> files_by_dir ){
+                    <span class="hljs-keyword">if</span>( files_by_dir[dir].length &gt; <span class="hljs-number">0</span> ){</pre></div>
+        
+      
+        
+        <p>create a new docco_run for later process</p>
+
+        
+          <div class='highlight'><pre>                        docco_runs.push({
+                            out: path.normalize(output+dir.substr(src_path.length-<span class="hljs-number">1</span>)),
+                            src_path: src_path,
+                            files: files_by_dir[dir]
+                        });
+                    }
+                }
+
+            }
+        }</pre></div>
+        
+      
+        
+        <p>process a batch of file to comment</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> run_docco = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></pre></div>
+        
+      
+        
+        <p>if all tasks ended</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span>( current_docco &gt;= docco_runs.length ){</pre></div>
+        
+      
+        
+        <p>consume async handler</p>
+
+        
+          <div class='highlight'><pre>                done();
+                <span class="hljs-keyword">return</span>;
+            }</pre></div>
+        
+      
+        
+        <p>prepare execution of dooco as an external binary, helped to solve some difficulties</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">var</span> docco_path = path.dirname(<span class="hljs-built_in">require</span>.resolve(<span class="hljs-string">"docco"</span>))+<span class="hljs-string">"/bin/docco"</span>;
+            <span class="hljs-keyword">var</span> docco_run = docco_runs[current_docco];
+            <span class="hljs-keyword">var</span> args = [
+                docco_path,
+                <span class="hljs-string">"--verbose"</span>,
+                <span class="hljs-string">"-l"</span>, options.layout,
+                <span class="hljs-string">"-o"</span>, docco_run.out
+            ];</pre></div>
+        
+      
+        
+        <p>for the current batch push files to docco bin’s argv</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> f <span class="hljs-keyword">in</span> docco_run.files ){
+                args.push(docco_run.files[f]);
+            }</pre></div>
+        
+      
+        
+        <p>execute docco</p>
+
+        
+          <div class='highlight'><pre>            <span class="hljs-keyword">try</span>{
+                childProcess.execFile(process.execPath, args, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span></pre></div>
+        
+      
+        
+        <p>provide some statistics</p>
+
+        
+          <div class='highlight'><pre>                    grunt.log.writeln(<span class="hljs-string">""</span>);
+                    grunt.log.ok(<span class="hljs-string">"Directory "</span>+(current_docco+<span class="hljs-number">1</span>)+<span class="hljs-string">"/"</span>+docco_runs.length);</pre></div>
+        
+      
+        
+        <p>display error on output</p>
+
+        
+          <div class='highlight'><pre>                    <span class="hljs-keyword">if</span>( err ) grunt.log.error(err);
+                    <span class="hljs-keyword">if</span>( stderr ) grunt.log.error(stderr);</pre></div>
+        
+      
+        
+        <p>parse output and clean it from too long file paths</p>
+
+        
+          <div class='highlight'><pre>                    stdout = treat_stdout(stdout,docco_run.src_path,docco_run.out)</pre></div>
+        
+      
+        
+        <p>display cleaned docco output</p>
+
+        
+          <div class='highlight'><pre>                    grunt.log.ok(stdout);</pre></div>
+        
+      
+        
+        <p>update current count of tasks done</p>
+
+        
+          <div class='highlight'><pre>                    current_docco++;</pre></div>
+        
+      
+        
+        <p>recall</p>
+
+        
+          <div class='highlight'><pre>                    run_docco();
+                })
+            }<span class="hljs-keyword">catch</span>(ex){</pre></div>
+        
+      
+        
+        <p>manage fatal error</p>
+
+        
+          <div class='highlight'><pre>                grunt.log.error(ex);
+                done(<span class="hljs-literal">false</span>);
+            }
+        }
+        run_docco();
+    });
+
+    <span class="hljs-comment">/**
+     *
+     * @param files
+     * @returns {{}}
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">grouped_by_directory</span><span class="hljs-params">( files )</span>{</span>
+        <span class="hljs-keyword">var</span> retour = {};
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> n <span class="hljs-keyword">in</span> files ){
+            <span class="hljs-keyword">var</span> f = files[n];
+            <span class="hljs-keyword">var</span> d = path.dirname(f);
+            <span class="hljs-keyword">if</span>( ! retour[d] ) retour[d] = [];
+            retour[d].push(f);
+        }
+        <span class="hljs-keyword">return</span> retour;
+    }
+
+    <span class="hljs-comment">/**
+     *
+     * @param stdout
+     * @param src_path
+     * @param out_path
+     * @returns {string}
+     */</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">treat_stdout</span><span class="hljs-params">( stdout,src_path,out_path )</span>{</span>
+        <span class="hljs-keyword">var</span> retour = [];
+        stdout = stdout.split(<span class="hljs-string">"\n"</span>);
+        <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> n <span class="hljs-keyword">in</span> stdout ){
+            retour.push(stdout[n].replace(src_path,<span class="hljs-string">""</span>).replace(out_path,<span class="hljs-string">""</span>).replace(<span class="hljs-string">"docco: "</span>,<span class="hljs-string">""</span>))
+        }
+        <span class="hljs-keyword">return</span> retour.join(<span class="hljs-string">"\n"</span>);
+    }
+
+};</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
